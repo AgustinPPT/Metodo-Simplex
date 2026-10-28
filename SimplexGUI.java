@@ -305,11 +305,6 @@ public class SimplexGUI extends JFrame {
         config.add(spRes);
         JButton btCrear = new JButton("Crear tabla");
         config.add(btCrear);
-        config.add(new JLabel("     Ejemplos:"));
-        JComboBox<String> cbEjemplos = new JComboBox<>(new String[]{
-                "— Elegir —", "1. Maximización clásica", "2. Minimización (≥ y =)",
-                "3. No factible", "4. No acotado", "5. Óptimos múltiples"});
-        config.add(cbEjemplos);
 
         // ---- Tabla de captura ----
         tablaEntrada.setRowHeight(26);
@@ -358,10 +353,6 @@ public class SimplexGUI extends JFrame {
         btCrear.addActionListener(e -> crearTabla());
         btResolver.addActionListener(e -> resolver());
         btLimpiar.addActionListener(e -> { panelResultados.removeAll(); panelResultados.revalidate(); panelResultados.repaint(); });
-        cbEjemplos.addActionListener(e -> {
-            int k = cbEjemplos.getSelectedIndex();
-            if (k > 0) { cargarEjemplo(k); cbEjemplos.setSelectedIndex(0); }
-        });
 
         crearTabla();
         setSize(1150, 800);
@@ -392,32 +383,6 @@ public class SimplexGUI extends JFrame {
         tablaEntrada.getColumnModel().getColumn(n + 1)
                 .setCellEditor(new DefaultCellEditor(new JComboBox<>(new String[]{"<=", ">=", "="})));
         tablaEntrada.getColumnModel().getColumn(n + 1).setMaxWidth(90);
-    }
-
-    private void cargarEjemplo(int k) {
-        Object[][] filas;
-        String obj;
-        switch (k) {
-            case 1: obj = "Maximizar"; filas = new Object[][]{
-                    {"3", "5"}, {"1", "0", "<=", "4"}, {"0", "2", "<=", "12"}, {"3", "2", "<=", "18"}}; break;
-            case 2: obj = "Minimizar"; filas = new Object[][]{
-                    {"2", "3"}, {"0.5", "0.25", "<=", "4"}, {"1", "3", ">=", "20"}, {"1", "1", "=", "10"}}; break;
-            case 3: obj = "Maximizar"; filas = new Object[][]{
-                    {"1", "1"}, {"1", "1", "<=", "2"}, {"1", "1", ">=", "5"}}; break;
-            case 4: obj = "Maximizar"; filas = new Object[][]{
-                    {"2", "1"}, {"1", "-1", "<=", "10"}, {"2", "-1", "<=", "40"}}; break;
-            default: obj = "Maximizar"; filas = new Object[][]{
-                    {"2", "4"}, {"1", "2", "<=", "5"}, {"1", "1", "<=", "4"}}; break;
-        }
-        cbObjetivo.setSelectedItem(obj);
-        spVars.setValue(2);
-        spRes.setValue(filas.length - 1);
-        crearTabla();
-        modelo.setValueAt(filas[0][0], 0, 1);
-        modelo.setValueAt(filas[0][1], 0, 2);
-        for (int i = 1; i < filas.length; i++)
-            for (int j = 0; j < 4; j++) modelo.setValueAt(filas[i][j], i, j + 1);
-        resolver();
     }
 
     private void resolver() {
